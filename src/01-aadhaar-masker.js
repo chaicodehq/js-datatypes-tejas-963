@@ -28,5 +28,17 @@
  *   // => "INVALID"
  */
 export function maskAadhaar(aadhaarNumber) {
-  // Your code here
+  
+  if (
+		!aadhaarNumber ||
+		typeof aadhaarNumber !== "string" ||
+		isNaN(aadhaarNumber) ||
+		aadhaarNumber.length !== 12
+  )
+		return "INVALID";
+
+  const last4Digits = aadhaarNumber.slice(8, 12)
+
+  return "XXXX-".repeat(2)+last4Digits
+
 }
