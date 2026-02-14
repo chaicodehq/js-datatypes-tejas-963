@@ -41,5 +41,63 @@
  *   // => { name: "Priya", totalMarks: 63, percentage: 31.5, grade: "F", ... }
  */
 export function generateReportCard(student) {
-  // Your code here
+	if (
+		!student ||
+		typeof student !== "object" ||
+		typeof student.name !== "string" ||
+		!student.name?.length ||
+		!student.marks ||
+		typeof student.marks !== "object" ||
+		!Object.keys(student.marks).length
+	)
+		return null;
+
+	const marks = Object.values(student.marks);
+
+	if (marks.filter((e) => typeof e !== "number" || e > 100 || e < 0).length)
+		return null;
+
+	const totalMarks = marks.reduce((acc, curr) => (acc += curr), 0);
+
+	const percentage = parseFloat(
+		((totalMarks / (marks.length * 100)) * 100).toFixed(2),
+	);
+
+	let grade;
+
+	if (percentage >= 90) grade = "A+";
+	else if (percentage >= 80) grade = "A";
+	else if (percentage >= 70) grade = "B";
+	else if (percentage >= 60) grade = "C";
+	else if (percentage >= 40) grade = "D";
+	else grade = "F";
+
+	const marksWithSub = Object.entries(student.marks).flat();
+
+	const passedSubjects = marksWithSub.filter(
+		(e, i) =>
+			typeof marksWithSub[i + 1] === "number" &&
+			marksWithSub[i + 1] >= 40,
+	);
+
+	const failedSubjects = marksWithSub.filter(
+		(e, i) =>
+			typeof marksWithSub[i + 1] === "number" && marksWithSub[i + 1] < 40,
+	);
+
+	return {
+		name: student.name,
+		totalMarks,
+		percentage,
+		grade,
+		highestSubject: marksWithSub.at(
+			marksWithSub.indexOf(Math.max(...marks)) - 1,
+		),
+		lowestSubject: marksWithSub.at(
+			marksWithSub.indexOf(Math.min(...marks)) - 1,
+		),
+		passedSubjects,
+		failedSubjects,
+		subjectCount: marks.length,
+	};
 }
