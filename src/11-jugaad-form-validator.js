@@ -62,5 +62,39 @@
  *   // => { isValid: false, errors: { name: "...", email: "...", ... } }
  */
 export function validateForm(formData) {
-  // Your code here
+
+  const errors = {}
+
+  formData.age = Number(formData.age)
+
+  const {name, email, phone, age, pincode, state, agreeTerms} = formData
+
+  if(!name || name.trim().length < 2 || name.trim().length > 50)
+    errors["name"] = "Name must be 2-50 characters";
+
+  if(!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      errors["email"] = "Invalid email format"
+
+   if(!phone || typeof phone !== "string" || phone.length !== 10 || isNaN(phone) || phone[0] < 6)
+      errors["phone"] = "Invalid Indian phone number"
+
+   if(!age || !Number.isInteger(age) || age < 16 || age > 100)
+      errors["age"] = "Age must be an integer between 16 and 100"
+
+   if(!pincode || typeof pincode !== "string" || pincode.length !== 6 || pincode.startsWith("0"))
+      errors["pincode"] = "Invalid Indian pincode"
+
+   for (const e of pincode) {
+    if(e.toLowerCase() >= "a" && e.toLowerCase() <= "z")
+      errors["pincode"] = "Invalid Indian pincode";
+   }
+
+   if(!state)
+      errors["state"] = "State is required"
+
+   if(!agreeTerms)
+      errors["agreeTerms"] = "Must agree to terms"
+  
+  return {isValid: Object.keys(errors).length === 0, errors }
+
 }
